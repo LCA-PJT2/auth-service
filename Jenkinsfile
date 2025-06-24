@@ -79,7 +79,7 @@ pipeline {
                     docker.withRegistry("", DOCKERHUB_CREDENTIAL) {
                         sh "docker buildx build --platform linux/amd64,linux/arm64 -t ${DOCKER_IMAGE_NAME} --push ."
                     }
-                    sh "docker rmi ${DOCKER_IMAGE_NAME}"
+                    sh "docker rmi -f ${DOCKER_IMAGE_NAME}"
                 }
             }
         }
