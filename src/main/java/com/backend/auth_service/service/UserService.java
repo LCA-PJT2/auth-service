@@ -111,7 +111,7 @@ public class UserService {
 
     // 유저 정보 수정
     public void updateUser(String userId, UpdateUserRequestDto dto, MultipartFile file) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         updateNickname(user, dto.getNickname());
         updatePassword(user, dto.getCurrentPassword(), dto.getNewPassword());
         String imageUrl = extractImageUrl(file);
@@ -140,7 +140,7 @@ public class UserService {
     }
 
     public void deleteUser(String userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         log.info("회원 탈퇴 시작: {}", user.getEmail());
@@ -154,7 +154,7 @@ public class UserService {
     }
 
     public void logout(String userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         redisTemplate.delete(REFRESH_TOKEN_PREFIX + user.getEmail());
@@ -162,7 +162,11 @@ public class UserService {
 
     // feign - c > u : 유저 묶음 조회
     public Map<String, String> getUsernames(List<String> userIds) {
-        List<User> users = userRepository.findAllById(userIds);
+        List<Long> userLongIds = userIds.stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+
+        List<User> users = userRepository.findAllById(userLongIds);
         return users.stream()
                 .collect(Collectors.toMap(
                         user -> user.getId().toString(),
@@ -172,7 +176,9 @@ public class UserService {
 
     // feign - c > u : 유저 단건 조회
     public UserInfoDto.UserResponse getUserInfo(String userId) {
-        User user = userRepository.findById(userId)
+        Long userId2 = Long.valueOf(userId);
+
+        User user = userRepository.findById(userId2)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         return new UserInfoDto.UserResponse(

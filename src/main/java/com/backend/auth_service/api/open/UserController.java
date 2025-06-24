@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<String>> signup(
-            @Valid @RequestPart("info") SignupRequestDto dto,
+            @RequestPart("info") SignupRequestDto dto,
             @RequestPart(value = "profileImage", required = false) MultipartFile file
     ){
         userService.signup(dto, file);
@@ -33,8 +33,9 @@ public class UserController {
                 .body(ApiResponseDto.success("회원가입 성공"));
     }
 
+
     @PostMapping(value = "/login")
-    public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto dto) {
+    public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(@RequestBody LoginRequestDto dto) {
         LoginResponseDto response = userService.login(dto);
         return ResponseEntity
                 .status(HttpStatus.OK)

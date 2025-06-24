@@ -22,7 +22,7 @@ public class AuthService {
     private static final String REFRESH_TOKEN_PREFIX = "RT:";
 
     public ReissueTokenResponseDto reissueToken(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         String redisKey = REFRESH_TOKEN_PREFIX + user.getEmail();
         String storedRefreshToken = (String) redisTemplate.opsForValue().get(redisKey);
