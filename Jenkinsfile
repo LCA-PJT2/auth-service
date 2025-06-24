@@ -87,11 +87,15 @@ pipeline {
         stage('Update Deployment Manifest & Git Push') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'github-tokeen', variable: 'GITHUB_TOKEN')]) {
+                    withCredentials([usernamePassword(
+                                         credentialsId: 'github-tokeen',
+                                         usernameVariable: 'GITHUB_USER',
+                                         passwordVariable: 'GITHUB_TOKEN'
+                                       )]) {
                         sh """
                         # 1. 저장소 clone
                         rm -rf app-config
-                        git clone https://${GITHUB_TOKEN}@github.com/LCA-PJT2/app-config.git
+                        git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/LCA-PJT2/app-config.git
                         cd app-config
 
                         # 2. image 태그 업데이트
