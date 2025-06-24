@@ -74,3 +74,18 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// build.gradle 맨 아래쯤에 추가
+tasks.register('getAppName') {
+	doLast {
+		// rootProject.name 은 settings.gradle 에 정의된 프로젝트 이름입니다.
+		println rootProject.name
+	}
+}
+
+tasks.register('getAppVersion') {
+	doLast {
+		// project.version 은 build.gradle 상단의 version 속성
+		println project.version
+	}
+}
