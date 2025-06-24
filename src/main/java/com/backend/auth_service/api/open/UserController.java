@@ -23,7 +23,7 @@ public class UserController {
 
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<String>> signup(
-            @Valid @ModelAttribute SignupRequestDto dto
+            @ModelAttribute SignupRequestDto dto
     ){
         userService.signup(dto, dto.getProfileImage());
         return ResponseEntity
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto dto) {
+    public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(@RequestBody LoginRequestDto dto) {
         LoginResponseDto response = userService.login(dto);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -41,7 +41,7 @@ public class UserController {
 
     @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<String>> updateUser(
-            @Valid @ModelAttribute UpdateUserRequestDto dto
+            @ModelAttribute UpdateUserRequestDto dto
     ) {
         Long userId = Long.valueOf(GatewayRequestHeaderUtils.getUserIdOrThrowException());
         userService.updateUser(userId, dto, dto.getProfileImage());
