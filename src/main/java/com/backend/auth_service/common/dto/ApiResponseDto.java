@@ -1,43 +1,52 @@
 package com.backend.auth_service.common.dto;
 
-import lombok.AccessLevel;
+import com.backend.auth_service.common.code.ErrorCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
-@ToString
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+@Setter
 public class ApiResponseDto<T> {
+
+    private boolean isSuccess;
     private String code;
     private String message;
-    private T data;
+    private T result;
 
-    private ApiResponseDto(String code, String message) {
-        this.code = code;
-        this.message = message;
+    public static <T> ApiResponseDto<T> success(T data) {
+        ApiResponseDto<T> r = new ApiResponseDto<>();
+        r.isSuccess = true;
+        r.code = "COMMON200";
+        r.message = "성공입니다.";
+        r.result = data;
+        return r;
     }
 
-    private ApiResponseDto(String code, String message, T data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
-    }
-
-    public static <T> ApiResponseDto<T> createOk(T data) {
-        return new ApiResponseDto<>("OK",
-                "요청이 성공하였습니다.", data);
-    }
-
-    public static ApiResponseDto<String> defaultOk() {
-        return ApiResponseDto.createOk(null);
-    }
-
-    public static ApiResponseDto<String> createError(String code, String message){
-        return new ApiResponseDto<>(code, message);
+    public static <T> ApiResponseDto<T> createError(String code, String message) {
+        ApiResponseDto<T> r = new ApiResponseDto<>();
+        r.isSuccess = false;
+        r.code = code;
+        r.message = message;
+        return r;
     }
 
     public static <T> ApiResponseDto<T> createError(String code, String message, T data) {
-        return new ApiResponseDto<>(code, message, data);
+        ApiResponseDto<T> r = createError(code, message);
+        r.result = data;
+        return r;
+    }
+
+    public static <T> ApiResponseDto<T> createError(ErrorCode ec) {
+        ApiResponseDto<T> r = new ApiResponseDto<>();
+        r.isSuccess = false;
+        r.code = ec.getCode();
+        r.message = ec.getMessage();
+        return r;
+    }
+
+    public static <T> ApiResponseDto<T> createError(ErrorCode ec, T data) {
+        ApiResponseDto<T> r = createError(ec);
+        r.result = data;
+        return r;
     }
 }

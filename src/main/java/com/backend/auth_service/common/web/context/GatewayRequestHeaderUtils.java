@@ -1,6 +1,7 @@
 package com.backend.auth_service.common.web.context;
 
-import com.backend.auth_service.common.exception.NotFound;
+import com.backend.auth_service.common.code.ErrorCode;
+import com.backend.auth_service.common.exception.BusinessException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -37,7 +38,7 @@ public class GatewayRequestHeaderUtils {
     public static String getUserIdOrThrowException() {
         String userId = getUserId();
         if (userId == null) {
-            throw new NotFound("헤더에 userId 정보가 없습니다.");
+            throw new BusinessException(ErrorCode.HEADER_USER_ID_MISSING);
         }
         return userId;
     }
@@ -45,7 +46,7 @@ public class GatewayRequestHeaderUtils {
     public static String getClientDeviceOrThrowException() {
         String clientDevice = getClientDevice();
         if (clientDevice == null) {
-            throw new NotFound("헤더에 사용자 디바이스 정보가 없습니다.");
+            throw new BusinessException(ErrorCode.HEADER_DEVICE_MISSING);
         }
         return clientDevice;
     }
@@ -53,7 +54,7 @@ public class GatewayRequestHeaderUtils {
     public static String getClientAddressOrThrowException() {
         String clientAddress = getClientAddress();
         if (clientAddress == null) {
-            throw new NotFound("헤더에 사용자 IP 주소 정보가 없습니다.");
+            throw new BusinessException(ErrorCode.HEADER_ADDRESS_MISSING);
         }
         return clientAddress;
     }

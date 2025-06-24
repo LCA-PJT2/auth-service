@@ -1,6 +1,7 @@
 [versions]
 jjwt_bom = "0.12.5"
 aws_s3_sdk = "1.12.780"
+spring_cloud_aws = "3.0.2"
 mysql_conn = "8.4.0"
 
 [libraries]
@@ -14,6 +15,7 @@ mysqlConnectorJ = { module = "com.mysql:mysql-connector-j", version.ref = "mysql
 
 # AWS SDK for S3
 awsJavaSdkS3 = { module = "com.amazonaws:aws-java-sdk-s3", version.ref = "aws_s3_sdk" }
+springCloudAwsStarter = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "spring_cloud_aws" }
 
 
 

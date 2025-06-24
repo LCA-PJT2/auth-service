@@ -18,10 +18,29 @@ spring:
     generate-ddl: true # 오직 테스트 환경에서만 (spring.jpa.generate-ddl)
     show-sql: true
     open-in-view: false
-
-  kafka:
-    bootstrap-servers: localhost:9092
-
   cloud:
-    config:
-      enabled: false # local 개발시 적용
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      region:
+        static: ${AWS_REGION}
+      s3:
+        bucket: ${AWS_S3_BUCKET}
+        enabled: true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  access-expires-in: 3600 # access token 만료(초)
+  refresh-expires-in: 604800 # refresh token 만료(초)
+  secret-key: ${JWT_SECRET_KEY}
