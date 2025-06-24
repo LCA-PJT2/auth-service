@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,10 +23,9 @@ public class UserController {
 
     @PostMapping(value = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<String>> signup(
-            @Valid @RequestPart("info") SignupRequestDto dto,
-            @RequestPart(value = "profileImage", required = false) MultipartFile file
+            @Valid @ModelAttribute SignupRequestDto dto
     ){
-        userService.signup(dto, file);
+        userService.signup(dto, dto.getProfileImage());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponseDto.success("회원가입 성공"));
@@ -43,11 +41,10 @@ public class UserController {
 
     @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<String>> updateUser(
-            @RequestPart("info")UpdateUserRequestDto dto,
-            @RequestPart(value = "profileImage", required = false) MultipartFile file
-            ) {
-        String userId = GatewayRequestHeaderUtils.getUserIdOrThrowException();
-        userService.updateUser(userId, dto, file);
+            @Valid @ModelAttribute UpdateUserRequestDto dto
+    ) {
+        Long userId = Long.valueOf(GatewayRequestHeaderUtils.getUserIdOrThrowException());
+        userService.updateUser(userId, dto, dto.getProfileImage());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponseDto.success("정보수정 성공"));
@@ -55,7 +52,7 @@ public class UserController {
 
     @PostMapping(value = "/delete")
     public ResponseEntity<ApiResponseDto<String>> deleteUser() {
-        String userId = GatewayRequestHeaderUtils.getUserIdOrThrowException();
+        Long userId = Long.valueOf(GatewayRequestHeaderUtils.getUserIdOrThrowException());
         userService.deleteUser(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -64,7 +61,7 @@ public class UserController {
 
     @PostMapping(value = "/logout")
     public ResponseEntity<ApiResponseDto<String>> logout() {
-        String userId = GatewayRequestHeaderUtils.getUserIdOrThrowException();
+        Long userId = Long.valueOf(GatewayRequestHeaderUtils.getUserIdOrThrowException());
         userService.logout(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)

@@ -1,6 +1,5 @@
 package com.backend.auth_service.domain;
 
-import com.backend.auth_service.repository.UserRepository;
 import jakarta.persistence.*;
 import lombok.*;
 

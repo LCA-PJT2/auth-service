@@ -20,7 +20,7 @@ public class AuthController {
 
     @PostMapping(value = "/reissue")
     public ResponseEntity<ApiResponseDto<ReissueTokenResponseDto>> reissueToken() {
-        String userId = GatewayRequestHeaderUtils.getUserIdOrThrowException();
+        Long userId = Long.valueOf(GatewayRequestHeaderUtils.getUserIdOrThrowException());
         ReissueTokenResponseDto token = authService.reissueToken(userId);
         return ResponseEntity
                 .status(HttpStatus.OK)

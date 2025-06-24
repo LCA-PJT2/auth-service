@@ -21,7 +21,7 @@ public class AuthService {
 
     private static final String REFRESH_TOKEN_PREFIX = "RT:";
 
-    public ReissueTokenResponseDto reissueToken(String userId) {
+    public ReissueTokenResponseDto reissueToken(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         String redisKey = REFRESH_TOKEN_PREFIX + user.getEmail();
@@ -32,7 +32,7 @@ public class AuthService {
         }
 
         String extractedUserId = tokenGenerator.validateJwtToken(storedRefreshToken);
-        if (extractedUserId == null || !extractedUserId.equals(userId)) {
+        if (extractedUserId == null || !extractedUserId.equals(user.getId().toString())) {
             throw new BusinessException(ErrorCode.AUTH_TOKEN_INVALID);
         }
 

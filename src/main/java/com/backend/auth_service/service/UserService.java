@@ -110,7 +110,7 @@ public class UserService {
     }
 
     // 유저 정보 수정
-    public void updateUser(String userId, UpdateUserRequestDto dto, MultipartFile file) {
+    public void updateUser(Long userId, UpdateUserRequestDto dto, MultipartFile file) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         updateNickname(user, dto.getNickname());
         updatePassword(user, dto.getCurrentPassword(), dto.getNewPassword());
@@ -139,7 +139,7 @@ public class UserService {
         user.changePassword(passwordEncoder.encode(newPassword));
     }
 
-    public void deleteUser(String userId) {
+    public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -147,13 +147,14 @@ public class UserService {
 
         redisTemplate.delete(REFRESH_TOKEN_PREFIX + user.getEmail());
 
-        communityClient.deleteCommunityDataByUser(userId);
-        qnaClient.deleteQnaDataByUser(userId);
+        String deleteUserId = user.getId().toString();
+        communityClient.deleteCommunityDataByUser(deleteUserId);
+        qnaClient.deleteQnaDataByUser(deleteUserId);
 
         userRepository.delete(user);
     }
 
-    public void logout(String userId) {
+    public void logout(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -162,7 +163,11 @@ public class UserService {
 
     // feign - c > u : 유저 묶음 조회
     public Map<String, String> getUsernames(List<String> userIds) {
-        List<User> users = userRepository.findAllById(userIds);
+        List<Long> ids = userIds.stream()
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+        List<User> users = userRepository.findByIdIn(ids);
+
         return users.stream()
                 .collect(Collectors.toMap(
                         user -> user.getId().toString(),
@@ -172,7 +177,8 @@ public class UserService {
 
     // feign - c > u : 유저 단건 조회
     public UserInfoDto.UserResponse getUserInfo(String userId) {
-        User user = userRepository.findById(userId)
+        Long id = Long.valueOf(userId);
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         return new UserInfoDto.UserResponse(
