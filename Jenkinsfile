@@ -98,11 +98,15 @@ pipeline {
                         sed -i 's|image: ${DOCKER_REGISTRY}/${APP_NAME}:.*|image: ${DOCKER_REGISTRY}/${APP_NAME}:${APP_VERSION}|' auth-service/prd/auth-service-deploy.yml
 
                         # 3. Git 설정 및 커밋
-                        git config user.name "damiiya"
-                        git config user.email "ddam2lee@gmail.com"
-                        git add auth-service/prd/auth-service-deploy.yml
-                        git commit -m "chore(auth): 버전 업데이트 ${APP_VERSION}"
-                        git push origin main
+                        if git diff --quiet; then
+                         echo "No changes to deploy manifest, skipping commit."
+                        else
+                         git config user.name "damiiya"
+                         git config user.email "ddam2lee@gmail.com"
+                         git add auth-service/prd/auth-service-deploy.yml
+                         git commit -m "chore(auth): 버전 업데이트 ${APP_VERSION}"
+                         git push origin main
+                        fi
                         """
                     }
                 }
