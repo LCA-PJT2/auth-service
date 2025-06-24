@@ -77,8 +77,8 @@ public class UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         validatePassword(dto.getPassword(), user.getPassword());
-        TokenDto.AccessRefreshToken tokens = tokenGenerator.generateAccessRefreshToken(user.getEmail());
-        storeRefreshToken(user.getEmail(), tokens);
+        TokenDto.AccessRefreshToken tokens = tokenGenerator.generateAccessRefreshToken(user.getId().toString());
+        storeRefreshToken(user.getId().toString(), tokens);
 
         return toLoginResponseDto(user, tokens);
     }
@@ -89,9 +89,9 @@ public class UserService {
         }
     }
 
-    private void storeRefreshToken(String email, TokenDto.AccessRefreshToken tokens) {
+    private void storeRefreshToken(String userId, TokenDto.AccessRefreshToken tokens) {
         redisTemplate.opsForValue().set(
-                REFRESH_TOKEN_PREFIX + email,
+                REFRESH_TOKEN_PREFIX + userId,
                 tokens.getRefreshToken().getToken(),
                 Duration.ofSeconds(tokens.getRefreshToken().getExpiresIn())
         );

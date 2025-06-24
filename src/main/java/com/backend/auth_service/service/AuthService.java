@@ -24,7 +24,7 @@ public class AuthService {
     public ReissueTokenResponseDto reissueToken(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        String redisKey = REFRESH_TOKEN_PREFIX + user.getEmail();
+        String redisKey = REFRESH_TOKEN_PREFIX + user.getId().toString();
         String storedRefreshToken = (String) redisTemplate.opsForValue().get(redisKey);
 
         if (storedRefreshToken == null) {
@@ -36,7 +36,7 @@ public class AuthService {
             throw new BusinessException(ErrorCode.AUTH_TOKEN_INVALID);
         }
 
-        TokenDto.AccessToken newTokens = tokenGenerator.generateAccessToken(user.getEmail());
+        TokenDto.AccessToken newTokens = tokenGenerator.generateAccessToken(user.getId().toString());
 
         return new ReissueTokenResponseDto(newTokens.getAccessToken().getToken());
     }
